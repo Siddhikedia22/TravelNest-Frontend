@@ -17,7 +17,8 @@ const SearchPage = () => {
 
   const getSearchListings = async () => {
     try {
-      const response = await fetch(`https://travelnest-backend-beaw.onrender.com/properties/search/${search}`, {
+      // 1. Swapped the hardcoded domain for your dynamic environment variable
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/properties/search/${search}`, {
         method: "GET"
       })
 
@@ -29,6 +30,7 @@ const SearchPage = () => {
     }
   }
 
+  
   useEffect(() => {
     getSearchListings()
   }, [search])

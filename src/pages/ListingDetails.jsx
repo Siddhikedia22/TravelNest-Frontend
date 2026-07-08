@@ -19,8 +19,9 @@ const ListingDetails = () => {
 
   const getListingDetails = async () => {
     try {
+      // 1. Replaced the hardcoded URL with the environment variable using backticks
       const response = await fetch(
-        `https://travelnest-backend-beaw.onrender.com/properties/${listingId}`,
+        `${process.env.REACT_APP_BASE_URL}/properties/${listingId}`,
         {
           method: "GET",
         }
@@ -61,6 +62,7 @@ const ListingDetails = () => {
 
   /* SUBMIT BOOKING */
   const customerId = useSelector((state) => state?.user?._id)
+  const token = useSelector((state) => state.token);
 
   const navigate = useNavigate()
 
@@ -75,10 +77,13 @@ const ListingDetails = () => {
         totalPrice: listing.price * dayCount,
       }
 
-      const response = await fetch("https://travelnest-backend-beaw.onrender.com/bookings/create", {
+      // 1. Swapped to the dynamic environment variable
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/bookings/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          // 2. Added the Authorization token
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(bookingForm)
       })
@@ -104,9 +109,11 @@ const ListingDetails = () => {
         </div>
 
         <div className="photos">
-          {listing.listingPhotoPaths?.map((item) => (
+          {listing.listingPhotoPaths?.map((item, index) => (
             <img
-              src={`https://travelnest-backend-beaw.onrender.com/${item.replace("public", "")}`}
+              key={index} // Added a key here to prevent React warnings!
+              // 1. Swapped the hardcoded URL for the environment variable
+              src={`${process.env.REACT_APP_BASE_URL}/${item.replace("public", "")}`}
               alt="listing photo"
             />
           ))}
@@ -124,23 +131,17 @@ const ListingDetails = () => {
 
         <div className="profile">
           <img
-            src={`https://travelnest-backend-beaw.onrender.com/${listing.creator.profileImagePath.replace(
+            // 2. Swapped the hardcoded URL here as well
+            src={`${process.env.REACT_APP_BASE_URL}/${listing.creator.profileImagePath.replace(
               "public",
               ""
             )}`}
+            alt="host profile"
           />
           <h3>
             Hosted by {listing.creator.firstName} {listing.creator.lastName}
           </h3>
         </div>
-        <hr />
-
-        <h3>Description</h3>
-        <p>{listing.description}</p>
-        <hr />
-
-        <h3>{listing.highlight}</h3>
-        <p>{listing.highlightDesc}</p>
         <hr />
 
         <div className="booking">

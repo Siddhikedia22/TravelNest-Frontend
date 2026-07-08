@@ -10,16 +10,22 @@ import Footer from "../components/Footer"
 const ReservationList = () => {
   const [loading, setLoading] = useState(true);
   const userId = useSelector((state) => state.user._id);
+  const token = useSelector((state) => state.token);
   const reservationList = useSelector((state) => state.user.reservationList);
 
   const dispatch = useDispatch();
 
-  const getReservationList = async () => {
+ const getReservationList = async () => {
     try {
+      // 1. Use the environment variable with backticks
       const response = await fetch(
-        `https://travelnest-backend-beaw.onrender.com/users/${userId}/reservations`,
+        `${process.env.REACT_APP_BASE_URL}/users/${userId}/reservations`,
         {
           method: "GET",
+          headers: {
+            // 2. Add the Authorization header
+            "Authorization": `Bearer ${token}`
+          }
         }
       );
 

@@ -15,26 +15,27 @@ const CategoryPage = () => {
   const dispatch = useDispatch()
   const listings = useSelector((state) => state.listings);
 
-  const getFeedListings = async () => {
-    try {
-      const response = await fetch(
-          `https://travelnest-backend-beaw.onrender.com/properties?category=${category}`,
-        {
-          method: "GET",
-        }
-      );
-
-      const data = await response.json();
-      dispatch(setListings({ listings: data }));
-      setLoading(false);
-    } catch (err) {
-      console.log("Fetch Listings Failed", err.message);
-    }
-  };
-
   useEffect(() => {
+    const getFeedListings = async () => {
+      try {
+        // 1. Swapped to the dynamic environment variable
+        const response = await fetch(
+            `${process.env.REACT_APP_BASE_URL}/properties?category=${category}`,
+          {
+            method: "GET",
+          }
+        );
+
+        const data = await response.json();
+        dispatch(setListings({ listings: data }));
+        setLoading(false);
+      } catch (err) {
+        console.log("Fetch Listings Failed", err.message);
+      }
+    };
+
     getFeedListings();
-  }, [category]);
+  }, [category, dispatch]); // 2. Added correct dependencies
 
   return loading ? (
     <Loader />
@@ -57,6 +58,7 @@ const CategoryPage = () => {
             booking = false,
           }) => (
             <ListingCard
+              key={_id} // 3. Added the unique key prop here!
               listingId={_id}
               creator={creator}
               listingPhotoPaths={listingPhotoPaths}

@@ -94,6 +94,7 @@ const CreateListing = () => {
   };
 
   const creatorId = useSelector((state) => state.user._id);
+  const token = useSelector((state) => state.token);
 
   const navigate = useNavigate();
 
@@ -128,9 +129,13 @@ const CreateListing = () => {
       });
 
       /* Send a POST request to server */
-      const response = await fetch("https://travelnest-backend-beaw.onrender.com/properties/create", {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/properties/create`, {
         method: "POST",
-        body: listingForm,
+        headers: {
+          // 2. Added the Authorization header to verify you are logged in
+          "Authorization": `Bearer ${token}`
+        },
+        body: listingForm, // Keep sending your FormData object exactly as it is
       });
 
       if (response.ok) {

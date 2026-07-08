@@ -10,16 +10,22 @@ import Footer from "../components/Footer"
 const TripList = () => {
   const [loading, setLoading] = useState(true);
   const userId = useSelector((state) => state.user._id);
+  const token = useSelector((state) => state.token);
   const tripList = useSelector((state) => state.user.tripList);
 
   const dispatch = useDispatch();
 
-  const getTripList = async () => {
+ const getTripList = async () => {
     try {
+      // 1. Swapped the hardcoded domain for your dynamic environment variable
       const response = await fetch(
-        `https://travelnest-backend-beaw.onrender.com/users/${userId}/trips`,
+        `${process.env.REACT_APP_BASE_URL}/users/${userId}/trips`,
         {
           method: "GET",
+          headers: {
+            // 2. Added the Authorization header to verify your identity
+            "Authorization": `Bearer ${token}`
+          }
         }
       );
 

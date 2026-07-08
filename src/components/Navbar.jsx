@@ -60,7 +60,8 @@ const Navbar = () => {
             <Person sx={{ color: variables.darkgrey }} />
           ) : (
             <img
-              src={`https://travelnest-backend-beaw.onrender.com/${user.profileImagePath.replace(
+              // Swapped the hardcoded domain for your dynamic environment variable
+              src={`${process.env.REACT_APP_BASE_URL}/${user.profileImagePath.replace(
                 "public",
                 ""
               )}`}

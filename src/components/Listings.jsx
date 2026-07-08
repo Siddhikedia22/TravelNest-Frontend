@@ -14,12 +14,14 @@ const Listings = () => {
 
   const listings = useSelector((state) => state.listings);
 
-  const getFeedListings = async () => {
+ const getFeedListings = async () => {
     try {
       const response = await fetch(
         selectedCategory !== "All"
-          ? `https://travelnest-backend-beaw.onrender.com/properties?category=${selectedCategory}`
-          : "https://travelnest-backend-beaw.onrender.com/properties",
+          // 1. Swapped the category-specific URL
+          ? `${process.env.REACT_APP_BASE_URL}/properties?category=${selectedCategory}`
+          // 2. Swapped the default "All" URL
+          : `${process.env.REACT_APP_BASE_URL}/properties`,
         {
           method: "GET",
         }

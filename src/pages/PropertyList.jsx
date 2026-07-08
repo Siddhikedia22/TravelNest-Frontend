@@ -10,14 +10,20 @@ import Footer from "../components/Footer"
 const PropertyList = () => {
   const [loading, setLoading] = useState(true)
   const user = useSelector((state) => state.user)
+  const token = useSelector((state) => state.token);
   const propertyList = user?.propertyList;
   console.log(user)
 
-  const dispatch = useDispatch()
+const dispatch = useDispatch()
   const getPropertyList = async () => {
     try {
-      const response = await fetch(`https://travelnest-backend-beaw.onrender.com/users/${user._id}/properties`, {
-        method: "GET"
+      // 1. Replaced the hardcoded URL with your dynamic environment variable
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/users/${user._id}/properties`, {
+        method: "GET",
+        headers: {
+          // 2. Added the Auth header so the backend lets you see the data
+          "Authorization": `Bearer ${token}` 
+        }
       })
       const data = await response.json()
       console.log(data)
@@ -27,7 +33,6 @@ const PropertyList = () => {
       console.log("Fetch all properties failed", err.message)
     }
   }
-
   useEffect(() => {
     getPropertyList()
   }, [])

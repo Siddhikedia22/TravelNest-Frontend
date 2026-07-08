@@ -43,24 +43,35 @@ const ListingCard = ({
 
   /* ADD TO WISHLIST */
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
+
   const wishList = user?.wishList || [];
 
   const isLiked = wishList?.find((item) => item?._id === listingId);
 
   const patchWishList = async () => {
     if (user?._id !== creator._id) {
-    const response = await fetch(
-      `https://travelnest-backend-beaw.onrender.com/users/${user?._id}/${listingId}`,
-      {
-        method: "PATCH",
-        header: {
-          "Content-Type": "application/json",
-        },
+      try {
+        // 1. Swapped to the dynamic environment variable
+        const response = await fetch(
+          `${process.env.REACT_APP_BASE_URL}/users/${user?._id}/${listingId}`,
+          {
+            method: "PATCH",
+            headers: { // 2. Fixed the typo from 'header' to 'headers'
+              "Content-Type": "application/json",
+              // 3. Added the Authorization token
+              "Authorization": `Bearer ${token}`
+            },
+          }
+        );
+        const data = await response.json();
+        dispatch(setWishList(data.wishList));
+      } catch (err) {
+        console.log("Update Wishlist failed", err.message);
       }
-    );
-    const data = await response.json();
-    dispatch(setWishList(data.wishList));
-  } else { return }
+    } else { 
+      return 
+    }
   };
 
   return (
@@ -78,7 +89,8 @@ const ListingCard = ({
           {listingPhotoPaths?.map((photo, index) => (
             <div key={index} className="slide">
               <img
-                src={`https://travelnest-backend-beaw.onrender.com/${photo?.replace("public", "")}`}
+                // Swapped the hardcoded domain for your dynamic environment variable
+                src={`${process.env.REACT_APP_BASE_URL}/${photo?.replace("public", "")}`}
                 alt={`photo ${index + 1}`}
               />
               <div
